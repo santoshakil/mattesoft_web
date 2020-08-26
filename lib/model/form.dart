@@ -33,12 +33,4 @@ class FeedbackFormAdmin {
     return FeedbackFormAdmin("${json['name']}", "${json['price']}",
         "${json['description']}", "${json['photo']}");
   }
-
-  // Method to make GET parameters.
-  // Map toJson() => {
-  //       'name': name,
-  //       'price': price,
-  //       'description': description,
-  //       'photo': photo
-  //     };
 }
