@@ -9,7 +9,7 @@ class FeedbackForm {
 
   factory FeedbackForm.fromJson(dynamic json) {
     return FeedbackForm("${json['name']}", "${json['quantity']}",
-        "${json['status']}", "${json['address']}");
+        "${json['price']}", "${json['address']}");
   }
 
   // Method to make GET parameters.
@@ -19,4 +19,26 @@ class FeedbackForm {
         'price': price,
         'address': address,
       };
+}
+
+class FeedbackFormAdmin {
+  String name;
+  String price;
+  String description;
+  String photo;
+
+  FeedbackFormAdmin(this.name, this.price, this.description, this.photo);
+
+  factory FeedbackFormAdmin.fromJson(dynamic json) {
+    return FeedbackFormAdmin("${json['name']}", "${json['price']}",
+        "${json['description']}", "${json['photo']}");
+  }
+
+  // Method to make GET parameters.
+  // Map toJson() => {
+  //       'name': name,
+  //       'price': price,
+  //       'description': description,
+  //       'photo': photo
+  //     };
 }

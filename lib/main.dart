@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mattesoft_web/test.dart';
+// ignore: unused_import
+import 'cart.dart';
+import 'controller/form_controller_admin.dart';
+import 'model/form.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -21,11 +26,30 @@ class CartItem {
 
 List<CartItem> cartItem = [];
 
+// ignore: unused_element
 var _quantity = TextEditingController();
 //var _address;
 
 // ignore: must_be_immutable
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  List<FeedbackFormAdmin> feedbackItems = List<FeedbackFormAdmin>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    FormControllerAdmin().getFeedbackList().then((feedbackItems) {
+      setState(() {
+        this.feedbackItems = feedbackItems;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,15 +138,97 @@ class MyApp extends StatelessWidget {
                 Expanded(flex: 1, child: SizedBox(height: 30)),
                 Expanded(
                   flex: 10,
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 3,
-                    children: List.generate(choices.length, (index) {
-                      return Center(
-                        child: ChoiceCard(choice: choices[index]),
-                      );
-                    }),
+                  child: Container(
+                    height: 900,
+                    child: GridView.builder(
+                      itemCount: feedbackItems.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: GridTile(
+                            child: Text(feedbackItems[index].name),
+                            footer: Row(
+                              children: [
+                                Expanded(
+                                    child: Text(feedbackItems[index].price)),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext contex) {
+                                        return AlertDialog(
+                                          content: Stack(
+                                            overflow: Overflow.visible,
+                                            children: [
+                                              Text('How much do you need?'),
+                                              Container(
+                                                height: 100,
+                                                child: Row(
+                                                  children: [
+                                                    Text('Quantity: '),
+                                                    Container(
+                                                      width: 50,
+                                                      child: TextField(
+                                                        controller: _quantity,
+                                                        maxLines: 1,
+                                                        minLines: 1,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 20),
+                                                    IconButton(
+                                                      icon: Icon(Icons.add),
+                                                      onPressed: () {
+                                                        cartItem.add(CartItem(
+                                                          name:
+                                                              '${feedbackItems[index].name}',
+                                                          quantity:
+                                                              '${_quantity.text}',
+                                                          price:
+                                                              '${feedbackItems[index].price}',
+                                                        ));
+                                                        showDialog(
+                                                          context: contex,
+                                                          builder: (BuildContext
+                                                              contex) {
+                                                            return AlertDialog(
+                                                              content: Card(
+                                                                elevation: 3,
+                                                                child: Text(
+                                                                    'Added to Cart.'),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: Icon(Icons.add),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
+                  // child: GridView.count(
+                  //   shrinkWrap: true,
+                  //   crossAxisCount: 3,
+                  //   children: List.generate(choices.length, (index) {
+                  //     return Center(
+                  //       child: ChoiceCard(choice: choices[index]),
+                  //     );
+                  //   }),
+                  // ),
                 ),
                 Expanded(flex: 1, child: SizedBox(height: 30))
               ],
@@ -133,13 +239,16 @@ class MyApp extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          for (var i in cartItem) {
-            print('${i.name}');
-          }
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => Cart()),
-          // );
+          // for (var i in cartItem) {
+          //   print('${i.name}');
+          // }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Test()),
+          );
+          // for (var i in feedbackItems) {
+          //   print(i.price);
+          // }
         },
       ),
     );
@@ -148,118 +257,146 @@ class MyApp extends StatelessWidget {
 
 Widget cartList() {
   if (cartItem.length != 0) {
-    return ListView.builder(
-      itemCount: cartItem.length,
-      itemBuilder: (context, index) {
-        return Text(cartItem[index].name);
-      },
-    );
-  }
-  return Text('Nothing in Cart');
-}
-
-class Choice {
-  const Choice({this.title, this.price, this.icon});
-  final String title;
-  final String price;
-  final IconData icon;
-}
-
-const List<Choice> choices = const [
-  const Choice(title: 'Car', price: '100.0', icon: Icons.directions_car),
-  const Choice(title: 'Bicycle', price: '100.0', icon: Icons.directions_bike),
-  const Choice(title: 'Boat', price: '100.0', icon: Icons.directions_boat),
-];
-
-class ChoiceCard extends StatelessWidget {
-  const ChoiceCard({Key key, this.choice}) : super(key: key);
-
-  final Choice choice;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-      color: Colors.white,
-      elevation: 3,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(child: Icon(choice.icon, size: 150)),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(choice.title),
-                      Text(choice.price),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext contex) {
-                        return AlertDialog(
-                          content: Stack(
-                            overflow: Overflow.visible,
-                            children: [
-                              Text('How much do you need?'),
-                              Container(
-                                height: 100,
-                                child: Row(
-                                  children: [
-                                    Text('Quantity: '),
-                                    Container(
-                                      width: 50,
-                                      child: TextField(
-                                        controller: _quantity,
-                                        maxLines: 1,
-                                        minLines: 1,
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-                                    IconButton(
-                                      icon: Icon(Icons.add),
-                                      onPressed: () {
-                                        cartItem.add(CartItem(
-                                          name: '${choice.title}',
-                                          quantity: '${_quantity.text}',
-                                          price: '${choice.price}',
-                                        ));
-                                        showDialog(
-                                          context: contex,
-                                          builder: (BuildContext contex) {
-                                            return AlertDialog(
-                                              content: Card(
-                                                elevation: 3,
-                                                child: Text('Added to Cart.'),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  icon: Icon(Icons.add),
-                ),
-              ],
-            )
-          ],
+    return Column(children: [
+      Expanded(
+        child: ListView.builder(
+          itemCount: cartItem.length,
+          itemBuilder: (context, index) {
+            return Text(cartItem[index].name);
+          },
         ),
       ),
-    );
+      RaisedButton(
+          child: Text('Conferm Order'),
+          elevation: 1,
+          color: Colors.blueGrey,
+          onPressed: () {})
+    ]);
+  } else {
+    return Text('Nothing in Cart');
   }
 }
+
+// class Choice {
+//   const Choice({this.title, this.price, this.icon});
+//   final String title;
+//   final String price;
+//   final IconData icon;
+// }
+
+// const List<Choice> choices = const [
+//   const Choice(title: 'Car', price: '100.0', icon: Icons.directions_car),
+//   const Choice(title: 'Bicycle', price: '100.0', icon: Icons.directions_bike),
+//   const Choice(title: 'Boat', price: '100.0', icon: Icons.directions_boat),
+// ];
+
+// class ChoiceCard extends StatefulWidget {
+//   const ChoiceCard({Key key, this.choice}) : super(key: key);
+
+//   final Choice choice;
+
+//   @override
+//   _ChoiceCardState createState() => _ChoiceCardState();
+// }
+
+// class _ChoiceCardState extends State<ChoiceCard> {
+//   List<FeedbackFormAdmin> feedbackItems = List<FeedbackFormAdmin>();
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     FormControllerAdmin().getFeedbackList().then((feedbackItems) {
+//       setState(() {
+//         this.feedbackItems = feedbackItems;
+//       });
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+//       color: Colors.white,
+//       elevation: 3,
+//       child: Center(
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Expanded(child: Icon(widget.choice.icon, size: 150)),
+//             Row(
+//               children: [
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(widget.choice.title),
+//                       Text(widget.choice.price),
+//                     ],
+//                   ),
+//                 ),
+//                 IconButton(
+//                   onPressed: () {
+//                     showDialog(
+//                       context: context,
+//                       builder: (BuildContext contex) {
+//                         return AlertDialog(
+//                           content: Stack(
+//                             overflow: Overflow.visible,
+//                             children: [
+//                               Text('How much do you need?'),
+//                               Container(
+//                                 height: 100,
+//                                 child: Row(
+//                                   children: [
+//                                     Text('Quantity: '),
+//                                     Container(
+//                                       width: 50,
+//                                       child: TextField(
+//                                         controller: _quantity,
+//                                         maxLines: 1,
+//                                         minLines: 1,
+//                                       ),
+//                                     ),
+//                                     SizedBox(width: 20),
+//                                     IconButton(
+//                                       icon: Icon(Icons.add),
+//                                       onPressed: () {
+//                                         cartItem.add(CartItem(
+//                                           name: '${widget.choice.title}',
+//                                           quantity: '${_quantity.text}',
+//                                           price: '${widget.choice.price}',
+//                                         ));
+//                                         showDialog(
+//                                           context: contex,
+//                                           builder: (BuildContext contex) {
+//                                             return AlertDialog(
+//                                               content: Card(
+//                                                 elevation: 3,
+//                                                 child: Text('Added to Cart.'),
+//                                               ),
+//                                             );
+//                                           },
+//                                         );
+//                                       },
+//                                     ),
+//                                   ],
+//                                 ),
+//                               )
+//                             ],
+//                           ),
+//                         );
+//                       },
+//                     );
+//                   },
+//                   icon: Icon(Icons.add),
+//                 ),
+//               ],
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

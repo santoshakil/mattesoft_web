@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'controller/form_controller.dart';
 import 'model/form.dart';
+import 'main.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -19,38 +19,44 @@ class _CartState extends State<Cart> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // TextField Controllers
-  TextEditingController nameController = TextEditingController();
-  TextEditingController quantityController = TextEditingController();
-  TextEditingController priceNoController = TextEditingController();
+  // TextEditingController nameController = TextEditingController();
+  // TextEditingController quantityController = TextEditingController();
+  // TextEditingController priceNoController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
   // Method to Submit Feedback and save it in Google Sheets
   void _submitForm() {
     // Validate returns true if the form is valid, or false
     // otherwise.
-    if (_formKey.currentState.validate()) {
-      // If the form is valid, proceed.
-      FeedbackForm feedbackForm = FeedbackForm(
-          nameController.text,
-          quantityController.text,
-          priceNoController.text,
-          addressController.text);
+    for (int i = 0; i < cartItem.length; i++) {
+      if (_formKey.currentState.validate()) {
+        // If the form is valid, proceed.
+        FeedbackForm feedbackForm = FeedbackForm(
+            // nameController.text,
+            // quantityController.text,
+            // priceNoController.text,
+            // addressController.text
+            cartItem[i].name,
+            cartItem[i].quantity,
+            cartItem[i].price,
+            addressController.text);
 
-      FormController formController = FormController();
+        FormController formController = FormController();
 
-      _showSnackbar("Submitting Feedback");
+        _showSnackbar("Submitting Feedback");
 
-      // Submit 'feedbackForm' and save it in Google Sheets.
-      formController.submitForm(feedbackForm, (String response) {
-        print("Response: $response");
-        if (response == FormController.STATUS_SUCCESS) {
-          // Feedback is saved succesfully in Google Sheets.
-          _showSnackbar("Order Submitted");
-        } else {
-          // Error Occurred while saving data in Google Sheets.
-          _showSnackbar("Error Occurred!");
-        }
-      });
+        // Submit 'feedbackForm' and save it in Google Sheets.
+        formController.submitForm(feedbackForm, (String response) {
+          print("Response: $response");
+          if (response == FormController.STATUS_SUCCESS) {
+            // Feedback is saved succesfully in Google Sheets.
+            _showSnackbar("Order Submitted");
+          } else {
+            // Error Occurred while saving data in Google Sheets.
+            _showSnackbar("Error Occurred!");
+          }
+        });
+      }
     }
   }
 
@@ -77,38 +83,39 @@ class _CartState extends State<Cart> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      TextFormField(
-                        controller: nameController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Enter Name';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(labelText: 'Name'),
-                      ),
-                      TextFormField(
-                        controller: quantityController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Enter Quantity';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(labelText: 'Quanity'),
-                      ),
-                      TextFormField(
-                        controller: priceNoController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Write yes or no';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Yes or No',
-                        ),
-                      ),
+                      // TextFormField(
+                      //   controller: nameController,
+                      //   validator: (value) {
+                      //     if (value.isEmpty) {
+                      //       return 'Enter Name';
+                      //     }
+                      //     return null;
+                      //   },
+                      //   decoration: InputDecoration(labelText: 'Name'),
+                      // ),
+                      // TextFormField(
+                      //   controller: quantityController,
+                      //   validator: (value) {
+                      //     if (value.isEmpty) {
+                      //       return 'Enter Quantity';
+                      //     }
+                      //     return null;
+                      //   },
+                      //   decoration: InputDecoration(labelText: 'Quanity'),
+                      // ),
+                      // TextFormField(
+                      //   controller: priceNoController,
+                      //   validator: (value) {
+                      //     if (value.isEmpty) {
+                      //       return 'Write yes or no';
+                      //     }
+                      //     return null;
+                      //   },
+                      //   decoration: InputDecoration(
+                      //     labelText: 'Yes or No',
+                      //   ),
+                      // ),
+                      Container(height: 100, child: cartListItem()),
                       TextFormField(
                         controller: addressController,
                         validator: (value) {
@@ -133,4 +140,17 @@ class _CartState extends State<Cart> {
       ),
     );
   }
+}
+
+Widget cartListItem() {
+  if (cartItem.length != 0) {
+    return ListView.builder(
+      itemCount: cartItem.length,
+      itemBuilder: (context, index) {
+        return Text(
+            '${cartItem[index].name}, Quantity: ${cartItem[index].quantity}');
+      },
+    );
+  }
+  return Text('Nothing in Cart');
 }
