@@ -184,7 +184,16 @@ class _MyAppState extends State<MyApp> {
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           child: GridTile(
-                            child: Text(feedbackItems[index].name),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(feedbackItems[index].name),
+                                Expanded(
+                                  child: Image.network(
+                                      '${feedbackItems[index].photo}'),
+                                ),
+                              ],
+                            ),
                             footer: Row(
                               children: [
                                 Expanded(
@@ -291,7 +300,8 @@ class _MyAppState extends State<MyApp> {
                     child: Column(
                       children: [
                         Text(cartItem[index].name),
-                        Text('Price per unit: ${cartItem[index].price}'),
+                        Text(
+                            'Price ${cartItem[index].quantity}*${cartItem[index].price} = ${int.tryParse(cartItem[index].price) * int.tryParse(cartItem[index].quantity)}'),
                         Text('Quantity: ${cartItem[index].quantity}')
                       ],
                     ),
@@ -300,6 +310,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             SizedBox(height: 10),
+            Text('Total price: ${totalPrice()}'),
             RaisedButton(
                 child: Text('Conferm Order'),
                 elevation: 1,
@@ -313,5 +324,15 @@ class _MyAppState extends State<MyApp> {
     } else {
       return Text('Nothing in Cart');
     }
+  }
+
+  totalPrice() {
+    int total = 0;
+    for (int i = 0; i < cartItem.length; i++) {
+      int price =
+          int.tryParse(cartItem[i].quantity) * int.tryParse(cartItem[i].price);
+      total = total + price;
+    }
+    return total;
   }
 }
