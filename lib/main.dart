@@ -175,95 +175,100 @@ class _MyAppState extends State<MyApp> {
                 Expanded(flex: 1, child: SizedBox(height: 30)),
                 Expanded(
                   flex: 10,
-                  child: Container(
-                    height: 900,
-                    child: GridView.builder(
-                      itemCount: feedbackItems.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: GridTile(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(feedbackItems[index].name),
-                                Expanded(
-                                  child: Image.network(
-                                      '${feedbackItems[index].photo}'),
-                                ),
-                              ],
-                            ),
-                            footer: Row(
-                              children: [
-                                Expanded(
-                                    child: Text(feedbackItems[index].price)),
-                                IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext contex) {
-                                        return AlertDialog(
-                                          content: Stack(
-                                            overflow: Overflow.visible,
-                                            children: [
-                                              Text('How much do you need?'),
-                                              Container(
-                                                height: 100,
-                                                child: Row(
-                                                  children: [
-                                                    Text('Quantity: '),
-                                                    Container(
-                                                      width: 50,
-                                                      child: TextField(
-                                                        controller: _quantity,
-                                                        maxLines: 1,
-                                                        minLines: 1,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      height: 900,
+                      child: GridView.builder(
+                        itemCount: feedbackItems.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: GridTile(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(feedbackItems[index].name),
+                                  Expanded(
+                                    child: Image.network(
+                                      '${feedbackItems[index].photo}',
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              footer: Row(
+                                children: [
+                                  Expanded(
+                                      child: Text(feedbackItems[index].price)),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext contex) {
+                                          return AlertDialog(
+                                            content: Stack(
+                                              overflow: Overflow.visible,
+                                              children: [
+                                                Text('How much do you need?'),
+                                                Container(
+                                                  height: 100,
+                                                  child: Row(
+                                                    children: [
+                                                      Text('Quantity: '),
+                                                      Container(
+                                                        width: 50,
+                                                        child: TextField(
+                                                          controller: _quantity,
+                                                          maxLines: 1,
+                                                          minLines: 1,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    SizedBox(width: 20),
-                                                    IconButton(
-                                                      icon: Icon(Icons.add),
-                                                      onPressed: () {
-                                                        cartItem.add(CartItem(
-                                                          name:
-                                                              '${feedbackItems[index].name}',
-                                                          quantity:
-                                                              '${_quantity.text}',
-                                                          price:
-                                                              '${feedbackItems[index].price}',
-                                                        ));
-                                                        showDialog(
-                                                          context: contex,
-                                                          builder: (BuildContext
-                                                              contex) {
-                                                            return AlertDialog(
-                                                              content: Card(
-                                                                elevation: 3,
-                                                                child: Text(
-                                                                    'Added to Cart.'),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: Icon(Icons.add),
-                                ),
-                              ],
+                                                      SizedBox(width: 20),
+                                                      IconButton(
+                                                        icon: Icon(Icons.add),
+                                                        onPressed: () {
+                                                          cartItem.add(CartItem(
+                                                            name:
+                                                                '${feedbackItems[index].name}',
+                                                            quantity:
+                                                                '${_quantity.text}',
+                                                            price:
+                                                                '${feedbackItems[index].price}',
+                                                          ));
+                                                          showDialog(
+                                                            context: contex,
+                                                            builder:
+                                                                (BuildContext
+                                                                    contex) {
+                                                              return AlertDialog(
+                                                                content: Card(
+                                                                  elevation: 3,
+                                                                  child: Text(
+                                                                      'Added to Cart.'),
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(Icons.add),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
