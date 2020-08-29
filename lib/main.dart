@@ -38,7 +38,8 @@ class _MyAppState extends State<MyApp> {
 
     FormControllerAdmin().getFeedbackList().then((feedbackItems) {
       setState(() {
-        this.feedbackItems = feedbackItems;
+        this.feedbackItems = feedbackItems.sublist(0, feedbackItems.length - 1);
+        //remove last item of list
       });
     });
   }
@@ -190,8 +191,20 @@ class _MyAppState extends State<MyApp> {
                                 children: [
                                   Text(feedbackItems[index].name),
                                   Expanded(
-                                    child: Image.network(
-                                        '${feedbackItems[index].photo}'),
+                                    child: FutureBuilder(
+                                        future: FormControllerAdmin()
+                                            .getFeedbackList(),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else {
+                                            String url =
+                                                '${feedbackItems[index].photo.toString()}';
+                                            return Image.network(url);
+                                          }
+                                        }),
                                   ),
                                 ],
                               ),
