@@ -191,9 +191,7 @@ class _MyAppState extends State<MyApp> {
                                   Text(feedbackItems[index].name),
                                   Expanded(
                                     child: Image.network(
-                                      '${feedbackItems[index].photo}',
-                                      fit: BoxFit.fill,
-                                    ),
+                                        '${feedbackItems[index].photo}'),
                                   ),
                                 ],
                               ),
