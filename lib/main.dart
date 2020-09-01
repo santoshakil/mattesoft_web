@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mattesoft_web/search.dart';
 import 'controller/form_controller.dart';
 import 'controller/form_controller_admin.dart';
 import 'model/form.dart';
@@ -31,6 +32,8 @@ class _MyAppState extends State<MyApp> {
   List<FeedbackFormAdmin> feedbackItems = List<FeedbackFormAdmin>();
   List<CartItem> cartItem = [];
   var _quantity = TextEditingController();
+  // ignore: unused_field
+  final TextEditingController _searchQuery = TextEditingController();
 
   @override
   void initState() {
@@ -292,7 +295,10 @@ class _MyAppState extends State<MyApp> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          print('You Pressed');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Search()),
+          );
         },
       ),
     );
